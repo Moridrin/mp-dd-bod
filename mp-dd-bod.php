@@ -10,6 +10,4 @@
  * License URI: http://www.wtfpl.net/txt/copying/
  */
 
-#region Require Once
 require_once 'functions.php';
-#endregion
