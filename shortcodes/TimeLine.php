@@ -14,7 +14,7 @@ abstract class TimeLine
             $attributes = [];
         }
         $attributes += [
-            'paged'          => get_query_var('paged'),
+            'paged'          => get_query_var('page'),
             'posts_per_page' => 10,
             'post_type'      => ['post', 'encounter'],
             'tax_query'      => [
