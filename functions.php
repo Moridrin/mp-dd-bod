@@ -41,23 +41,12 @@ function mp_filter_word_replacements($content)
     $content = preg_replace('/\b(William Richfield|William|Richfield)\b/', '<a href="http://moridrin.com/the-players/william-richfield/">$0</a>', $content);
     $content = preg_replace('/\b(Ykki(uto)? Quaews|Ykki(uto)?|Quaews)\b/', '<a href="http://moridrin.com/the-players/ykkiuto-quaews/">$0</a>', $content);
 
-    // Important NPC Aliases
+    // Important NPCs and Organizations
     $content = preg_replace('/\b(Albert Morbo|K?k?ing Morbo|Morbo)\b/', '<a href="http://moridrin.com/npc/albert-morbo/">$0</a>', $content);
-
-    // Posts
-    global $post;
-    global $wpdb;
-    $postId     = $post->ID;
-    $postsTable = $wpdb->posts;
-    $posts      = $wpdb->get_results("SELECT post_title, guid FROM $postsTable WHERE ID != $postId AND post_status = 'publish'");
-    foreach ($posts as $post) {
-        if (ctype_alpha(str_replace(' ', '', $post->post_title))) {
-            $content = preg_replace('/<a[^>]*>(?:[a-zA-Z0-9\s\'\-\.,]|(?:<(.*)>.*<\/\1>))*<\/a>(*SKIP)(*FAIL)|\b('.$post->post_title.')\b(?=[^>]*(?:<|$))/', '<a href="'.$post->guid.'">$0</a>', $content);
-        }
-    }
-
-    // Locations
-    $content = preg_replace('/\b(Beast Peaks)\b/', '<a href="http://maps.moridrin.com?x=-125123197&y=423515724&z=8" target="_blank">$0</a>', $content, -1, $count);
+    $content = preg_replace('/Cal&#8217;Chos/', '<a href="https://moridrin.com/important-characters/kirin-tor/#calchos">$0</a>', $content);
+    $content = preg_replace('/>Kirin Tor</', '>########<', $content);
+    $content = preg_replace('/\b(Kirin Tor)\b/', '<a href="https://moridrin.com/important-characters/kirin-tor/">$0</a>', $content);
+    $content = preg_replace('/>########</', '>Kirin Tor<', $content);
 
     return $content;
 }
