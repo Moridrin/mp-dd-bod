@@ -14,3 +14,4 @@ require_once 'functions.php';
 require_once 'shortcodes/MoridrinMaps.php';
 require_once 'shortcodes/DndbCharacters.php';
 require_once 'shortcodes/TimeLine.php';
+require_once 'post-type/Location.php';
