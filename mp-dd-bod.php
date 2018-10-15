@@ -11,6 +11,7 @@
  */
 
 require_once 'functions.php';
+require_once 'shortcodes/Calendar.php';
 require_once 'shortcodes/MoridrinMaps.php';
 require_once 'shortcodes/DndbCharacters.php';
 require_once 'shortcodes/TimeLine.php';
