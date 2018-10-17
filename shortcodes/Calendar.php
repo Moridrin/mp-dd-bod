@@ -42,7 +42,7 @@ abstract class Calendar
         ];
         $moons         = [
             ['name' => 'Elmon', 'cicle' => 11, 'start' => 0],
-            ['name' => 'Elralei', 'cicle' => 27, 'start' => 1],
+            ['name' => 'Elralei', 'cicle' => 27, 'start' => 3],
         ];
         $year          = 3025;
         $day           = 0;
@@ -132,7 +132,7 @@ abstract class Calendar
                 <?php $daysInMonth = $data['days'] ?>
                 <tr>
                     <td>
-                        <table>
+                        <table style="table-layout: fixed;">
                             <tbody>
                             <tr>
                                 <td colspan="5" class="center"><h2><?=BaseFunctions::escape($monthName, 'html')?></h2></td>
@@ -159,16 +159,24 @@ abstract class Calendar
                                             <td colspan="1"></td>
                                             <?php
                                         } else {
+                                            // $args  = [
+                                            //     'date_query' => [
+                                            //         [
+                                            //             'after'     => 'January 1st, 2015',
+                                            //             'before'    => 'December 31st, 2015',
+                                            //             'inclusive' => true,
+                                            //         ],
+                                            //     ],
+                                            // ];
+                                            // $query = new \WP_Query($args);
                                             ?>
-                                            <td>
+                                            <td style="width: 150px; height: 150px;">
                                                 <div class="mday">Day:<?=$monthDay?></div>
                                                 <div class="moons">
                                                     <?php foreach ($moons as $moon => $moonData): ?>
                                                         <?php $moonName = $moonData['name'] ?>
                                                         <?php $moonPhase = ($day + $moonData['start']) % $moonData['cicle'] ?>
-                                                        <?= 'phase: '.($moonPhase/$moonData['cicle'])*7 ?>
-                                                        <?php $moonPhase = intval(($moonPhase/$moonData['cicle'])*7) ?>
-                                                        <?= 'phase: '.$moonPhase ?>
+                                                        <?php $moonPhase = intval(($moonPhase/$moonData['cicle'])*8) ?>
                                                         <div title="<?=BaseFunctions::escape($moonName, 'attr')?>, <?=$lunarPhases[(($moonPhase/$moonData['cicle'])*7)]?>" class="lunar phase-<?=$moonPhase?>"><?=BaseFunctions::escape($moonName, 'html')?>, <?=$lunarPhases[$moonPhase]?></div>
                                                     <?php endforeach; ?>
                                                 </div>
@@ -192,7 +200,6 @@ abstract class Calendar
             </tbody>
         </table>
         <?php
-        ?><a href="<?=BaseFunctions::escape($attributes['url'], 'attr')?>" target="_blank"><?=$innerHtml?></a><?php
         return ob_get_clean();
     }
 
