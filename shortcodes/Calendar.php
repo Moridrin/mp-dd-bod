@@ -6,9 +6,9 @@ use mp_general\base\BaseFunctions;
 
 abstract class Calendar
 {
+
     public static function calendar($attributes, $innerHtml)
     {
-        ob_start();
         $lunarPhases   = [
             'New Moon',
             'Waxing Crescent',
@@ -47,6 +47,7 @@ abstract class Calendar
         $year          = 2018;
         $day           = 0;
         $monthStartsOn = 1;
+        ob_start();
         ?>
         <style>
             .lunar {
@@ -127,9 +128,11 @@ abstract class Calendar
         </style>
         <table id="calendar" class="calendar">
             <tbody class="block">
-            <?php foreach ($months as $month => $data): ?>
-                <?php $monthName = $data['name'] ?>
-                <?php $daysInMonth = $data['days'] ?>
+            <?php foreach ($months as $month => $data) {
+                $monthEnded  = false;
+                $monthName   = $data['name'];
+                $daysInMonth = $data['days'];
+                ?>
                 <tr>
                     <td>
                         <table style="table-layout: fixed;">
@@ -154,7 +157,10 @@ abstract class Calendar
                                             <td colspan="1"></td>
                                             <?php
                                         } elseif ($monthDay > $daysInMonth) {
-                                            $monthStartsOn = $dayOfWeek;
+                                            if (!$monthEnded) {
+                                                $monthEnded    = true;
+                                                $monthStartsOn = $dayOfWeek;
+                                            }
                                             ?>
                                             <td colspan="1"></td>
                                             <?php
@@ -162,9 +168,10 @@ abstract class Calendar
                                             $args  = [
                                                 'date_query' => [
                                                     [
-                                                        'after'    => $year.'-'.($month + 1).'-'.($monthDay),
-                                                        'before'    => $year.'-'.($month + 1).'-'.($monthDay + 1),
-                                                        'inclusive' => true,
+                                                        'year' => $year,
+                                                        'month' => $month+1,
+                                                        'day' => $monthDay,
+                                                        'limit'     => 1,
                                                     ],
                                                 ],
                                             ];
@@ -176,18 +183,22 @@ abstract class Calendar
                                                 if (!empty($posts)) {
                                                     $url = get_the_post_thumbnail_url($posts[0]->ID, 'thumbnail');
                                                     ?>
-                                                    <a href="<?= get_permalink($posts[0]->ID) ?>" style="background: url(<?= $url ?>);">
+                                                    <a href="<?=get_permalink($posts[0]->ID)?>" style="background: url(<?=$url?>);">
                                                         <div class="overlay"></div>
                                                         <div class="mday">Day:<?=$monthDay?></div>
                                                         <div class="moons">
                                                             <?php foreach ($moons as $moon => $moonData): ?>
                                                                 <?php $moonName = $moonData['name'] ?>
                                                                 <?php $moonPhase = ($day + $moonData['start']) % $moonData['cicle'] ?>
-                                                                <?php $moonPhase = intval(($moonPhase/$moonData['cicle'])*8) ?>
-                                                                <div title="<?=BaseFunctions::escape($moonName, 'attr')?>, <?=$lunarPhases[(($moonPhase/$moonData['cicle'])*7)]?>" class="lunar phase-<?=$moonPhase?>"><?=BaseFunctions::escape($moonName, 'html')?>, <?=$lunarPhases[$moonPhase]?></div>
+                                                                <?php $moonPhase = intval(($moonPhase / $moonData['cicle']) * 8) ?>
+                                                                <div title="<?=BaseFunctions::escape($moonName, 'attr')?>, <?=$lunarPhases[(($moonPhase / $moonData['cicle']) * 7)]?>" class="lunar phase-<?=$moonPhase?>">
+                                                                    <?=BaseFunctions::escape($moonName, 'html')?>, <?=$lunarPhases[$moonPhase]?>
+                                                                </div>
                                                             <?php endforeach; ?>
                                                         </div>
-                                                        <div id="note-<?=BaseFunctions::escape($year, 'attr')?>-<?=BaseFunctions::escape($month, 'attr')?>-<?=BaseFunctions::escape($day, 'attr')?>" class="note" data-ymd="<?=BaseFunctions::escape($year, 'attr')?>-<?=BaseFunctions::escape($month, 'attr')?>-<?=BaseFunctions::escape($day, 'attr')?>"></div>
+                                                        <div id="note-<?=BaseFunctions::escape($year, 'attr')?>-<?=BaseFunctions::escape($month, 'attr')?>-<?=BaseFunctions::escape($day, 'attr')?>" class="note" data-ymd="<?=BaseFunctions::escape($year, 'attr')?>-<?=BaseFunctions::escape($month, 'attr')?>-<?=BaseFunctions::escape($day, 'attr')?>">
+                                                            <?=BaseFunctions::escape($posts[0]->post_title, 'html')?>
+                                                        </div>
                                                     </a>
                                                     <?php
                                                 } else {
@@ -197,11 +208,12 @@ abstract class Calendar
                                                         <?php foreach ($moons as $moon => $moonData): ?>
                                                             <?php $moonName = $moonData['name'] ?>
                                                             <?php $moonPhase = ($day + $moonData['start']) % $moonData['cicle'] ?>
-                                                            <?php $moonPhase = intval(($moonPhase/$moonData['cicle'])*8) ?>
-                                                            <div title="<?=BaseFunctions::escape($moonName, 'attr')?>, <?=$lunarPhases[(($moonPhase/$moonData['cicle'])*7)]?>" class="lunar phase-<?=$moonPhase?>"><?=BaseFunctions::escape($moonName, 'html')?>, <?=$lunarPhases[$moonPhase]?></div>
+                                                            <?php $moonPhase = intval(($moonPhase / $moonData['cicle']) * 8) ?>
+                                                            <div title="<?=BaseFunctions::escape($moonName, 'attr')?>, <?=$lunarPhases[(($moonPhase / $moonData['cicle']) * 7)]?>" class="lunar phase-<?=$moonPhase?>">
+                                                                <?=BaseFunctions::escape($moonName, 'html')?>, <?=$lunarPhases[$moonPhase]?>
+                                                            </div>
                                                         <?php endforeach; ?>
                                                     </div>
-                                                    <div id="note-<?=BaseFunctions::escape($year, 'attr')?>-<?=BaseFunctions::escape($month, 'attr')?>-<?=BaseFunctions::escape($day, 'attr')?>" class="note" data-ymd="<?=BaseFunctions::escape($year, 'attr')?>-<?=BaseFunctions::escape($month, 'attr')?>-<?=BaseFunctions::escape($day, 'attr')?>"></div>
                                                     <?php
                                                 }
                                                 ?>
@@ -220,7 +232,12 @@ abstract class Calendar
                         </table>
                     </td>
                 </tr>
-            <?php endforeach; ?>
+                <?php
+                if (!$monthEnded) {
+                    $monthStartsOn = 0;
+                }
+            }
+            ?>
             </tbody>
         </table>
         <?php
